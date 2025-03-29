@@ -17,8 +17,15 @@ class User(db.Model):
 class Subject(db.Model):
     id = Column(Integer, primary_key=True)
     sname = Column(String(32), unique=True,nullable=False)
-    score = db.relationship('Scores', backref='subject', lazy=True, cascade='all, delete-orphan')
-    quizz = db.relationship('Quizz', backref='subject', lazy=True, cascade='all, delete-orphan')
+    
+    chapter = db.relationship('Chapter', backref='subject', lazy=True, cascade='all, delete-orphan')
+
+class Chapter(db.Model):
+    id = Column(Integer, primary_key=True)
+    chname = Column(String(32), unique=True,nullable=False)
+    sname = Column(Integer,ForeignKey('subject.sname'),nullable=False)
+    
+    quizz = db.relationship('Quizz', backref='chapter', lazy=True, cascade='all, delete-orphan')
 
 class Quizz(db.Model):
     id = Column(Integer, primary_key=True)
@@ -26,9 +33,9 @@ class Quizz(db.Model):
     date = Column(Date, nullable=False)
     stime = Column(Time, nullable=False)
     etime = Column(Time, nullable=False)
-    subject_id = Column(Integer,ForeignKey('subject.id'),nullable=False)
+    chapter_id = Column(Integer,ForeignKey('chapter.id'),nullable=False)
     score = db.relationship('Scores', backref='quizz', lazy=True, cascade='all, delete-orphan')
-    score = db.relationship('Question', backref='quizz', lazy=True, cascade='all, delete-orphan')
+    question = db.relationship('Question', backref='quizz', lazy=True, cascade='all, delete-orphan')
 
 class Question(db.Model):
     id = Column(Integer, primary_key=True)
@@ -50,7 +57,6 @@ class Scores(db.Model):
     rank = Column(Integer, nullable=False)
     quiz_id = Column(Integer,ForeignKey('quizz.id'),nullable=False)
     user_id = Column(Integer,ForeignKey('user.id'),nullable=False)
-    subject_id = Column(Integer,ForeignKey('subject.id'),nullable=False)
 
 with app.app_context():
     db.create_all()
