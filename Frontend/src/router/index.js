@@ -12,6 +12,11 @@ import AdminQuiz from '@/components/AdminQuiz.vue'
 import AddQuiz from '@/components/AddQuiz.vue'
 import EditQuiz from '@/components/EditQuiz.vue'
 import AdminQuestion from '@/components/AdminQuestion.vue'
+import UserSubject from '@/components/UserSubject.vue'
+import Userchapter from '@/components/UserChapter.vue'
+import Userquiz from '@/components/UserQuiz.vue'
+import Userquestion from '@/components/UserQuestion.vue'
+import UserDashboard from '@/components/UserDashboard.vue'
 
 
 
@@ -83,6 +88,32 @@ const router = createRouter({
       name: 'adminquestion',
       component: AdminQuestion,
     },
+    {
+      path: '/subject',
+      name: 'usersubject',
+      component: UserSubject,
+    },
+    {
+      path: '/chapter/:sname',
+      name: 'userchapter',
+      component: Userchapter,
+    },
+    {
+      path: '/quizzes/:chname',
+      name: 'userquiz',
+      component: Userquiz,
+    },
+    {
+      path: '/question/:quiz_id',
+      name: 'userquestion',
+      component: Userquestion,
+    },
+    {
+      path: '/dashboard',
+      name: 'userdashboard',
+      component: UserDashboard,
+    },
+    
   ],
 })
 
