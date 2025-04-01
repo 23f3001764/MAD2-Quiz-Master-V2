@@ -102,7 +102,7 @@ export default {
             if (!confirm("Are you sure you want to delete this quiz?")) return;
 
             try {
-                const response = await fetch(`/api/quiz/${quizId}`, { // Fixed API URL
+                const response = await fetch(`/api/quiz/${quizId}`, { 
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`,

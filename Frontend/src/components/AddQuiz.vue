@@ -1,5 +1,6 @@
 <template>
     <div class="container mt-4">
+        <!-- Error & Success Messages -->
         <div v-if="errormessage" class="alert alert-danger text-center ">
             {{ errormessage }}
             <button @click="errormessage = null" class="btn-close" aria-label="Close"></button>
@@ -8,7 +9,6 @@
             {{ successmessage }}
             <button @click="successmessage = null" class="btn-close" aria-label="Close"></button>
         </div>
-
         <div class="card p-4">
             <h2 class="text-center">Add New Quiz</h2>
             <form @submit.prevent="submitForm">
@@ -51,7 +51,7 @@ export default {
         return {
             quiz: {
                 topic: "",
-                chname: this.$route.params.chname, 
+                chname: this.$route.params.chname, // Get chapter name from URL
                 date: "",
                 duration: "",
                 remarks: ""
@@ -101,6 +101,7 @@ export default {
 </script>
 
 <style scoped>
+/* Form Styling */
 .form-group {
     margin-bottom: 15px;
 }
@@ -133,5 +134,6 @@ textarea {
 .btn-primary:hover {
     background-color: #0056b3;
 }
+
 
 </style>

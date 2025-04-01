@@ -37,7 +37,8 @@
                                 @click="unnotifyMe(chapter.id)">
                                 Unnotify Me
                             </button>
-                            <button v-else class="btn btn-success btn-sm ms-2" @click="notifyMe(chapter.chname)">
+                            <button v-else class="btn btn-success btn-sm ms-2"
+                                @click="notifyMe(chapter.id, chapter.chname)">
                                 Notify Me
                             </button>
                         </td>
@@ -59,10 +60,9 @@ export default {
         return {
             sname: this.$route.params.sname,
             chapters: [],
-            notifiedChapters: [], 
+            notifiedChapters: [],
             searchQuery: "",
             errormessage: null,
-            chapID: null,
         };
     },
     computed: {
@@ -72,6 +72,7 @@ export default {
             );
         },
     },
+
     created() {
         this.fetchChapters();
         this.fetchNotifiedChapters();
@@ -79,13 +80,11 @@ export default {
     methods: {
         async fetchChapters() {
             const token = localStorage.getItem("usertoken");
-
             try {
                 const response = await fetch(`/api/chapter/${this.sname}`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
-
                 const data = await response.json();
                 this.chapters = data;
             } catch (error) {
@@ -96,32 +95,24 @@ export default {
 
         async fetchNotifiedChapters() {
             const token = localStorage.getItem("usertoken");
-
             try {
                 const response = await fetch(`/api/notify`, {
                     method: "GET",
                     headers: { Authorization: `Bearer ${token}` },
                 });
-
-                const text = await response.text();  
-                console.log("Raw API Response:", text);
-
-                const data = JSON.parse(text);
-
-                this.notifiedChapters = data.map(notify => notify.chname);
+                const data = await response.json();
+                this.notifiedChapters = data.map(notify => notify.chap_id);
             } catch (error) {
                 console.error("Error fetching notifications:", error);
             }
         },
 
-        async notifyMe(chname) {
+        async notifyMe(chapId, chname) {
             const token = localStorage.getItem("usertoken");
-
-            const notifyTime = prompt("Enter notification time in 24 hour format (HH:MM):");
+            const notifyTime = prompt("Enter notification time in 24-hour format (HH:MM):");
             if (!notifyTime) return;
-
             try {
-                const response = await fetch(`/api/notifies/${chname}`, {
+                const response = await fetch(`/api/notifies/${chapId}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -129,10 +120,8 @@ export default {
                     },
                     body: JSON.stringify({ time: notifyTime }),
                 });
-
                 if (!response.ok) throw new Error("Failed to set notification");
-
-                this.notifiedChapters.push(chapId);
+                this.fetchNotifiedChapters();
             } catch (error) {
                 console.error("Error setting notification:", error);
             }
@@ -140,18 +129,12 @@ export default {
 
         async unnotifyMe(chapId) {
             const token = localStorage.getItem("usertoken");
-
             try {
-                const notifyId = this.notifiedChapters.find(id => id === chapId);
-                if (!notifyId) return;
-
-                const response = await fetch(`/api/notify/${notifyId}`, {
+                const response = await fetch(`/api/notify/${chapId}`, {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` },
                 });
-
                 if (!response.ok) throw new Error("Failed to remove notification");
-
                 this.notifiedChapters = this.notifiedChapters.filter(id => id !== chapId);
             } catch (error) {
                 console.error("Error removing notification:", error);

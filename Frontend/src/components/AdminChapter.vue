@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-4">
-        <div v-if="errormessage" class="alert alert-danger text-center">
+        <div v-if="errormessage" class="alert alert-danger text-center ">
             {{ errormessage }}
             <button @click="errormessage = null" class="btn-close" aria-label="Close"></button>
         </div>

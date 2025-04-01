@@ -37,8 +37,8 @@
                         <td>{{ quiz.remarks }}</td>
                         <td>
                             <router-link :to="'/question/' + quiz.id" class="btn btn-sm"
-                                :class="hasAttempted(quiz.id) ? 'btn-warning' : 'btn-info'">
-                                {{ hasAttempted(quiz.id) ? "Try Again" : "Start Quiz" }}
+                                :class="attemptedQuizzes[quiz.id] ? 'btn-warning' : 'btn-info'">
+                                {{ attemptedQuizzes[quiz.id] ? "Try Again" : "Start Quiz" }}
                             </router-link>
                         </td>
                     </tr>
@@ -61,7 +61,7 @@ export default {
             searchQuery: "",
             errormessage: null,
             chname: this.$route.params.chname,
-            attemptedQuizIds: new Set(),
+            attemptedQuizzes: {},
         };
     },
     computed: {
@@ -73,7 +73,6 @@ export default {
     },
     created() {
         this.fetchQuizzes();
-        this.fetchUserScores();
     },
     methods: {
         async fetchQuizzes() {
@@ -90,33 +89,36 @@ export default {
 
                 const data = await response.json();
                 this.quizzes = data;
+                this.checkAttemptedQuizzes();
             } catch (error) {
                 console.error("Error fetching quizzes:", error);
                 this.errormessage = "Failed to fetch quizzes.";
             }
         },
-        async fetchUserScores() {
+        async checkAttemptedQuizzes() {
             const token = localStorage.getItem("usertoken");
-            try {
-                const response = await fetch("/api/score", {
-                    method: "GET",
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+            const decodedToken = JSON.parse(atob(token.split(".")[1]));
+            const user = decodedToken.sub;
+            const userId = user.user_id;
 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch user scores.");
+            for (const quiz of this.quizzes) {
+                try {
+                    const response = await fetch(`/api/check/${userId}/${quiz.id}`, {
+                        method: "GET",
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+
+                    if (!response.ok) {
+                        console.error(`Failed to check quiz ${quiz.id}`);
+                        continue;
+                    }
+
+                    const data = await response.json();
+                    this.$set(this.attemptedQuizzes, quiz.id, data.message === "True");
+                } catch (error) {
+                    console.error("Error checking quiz attempt:", error);
                 }
-
-                const data = await response.json();
-
-                this.attemptedQuizIds = new Set(data.map(score => score.quiz_id));
-            } catch (error) {
-                console.error("Error fetching user scores:", error);
-                this.errormessage = "Failed to fetch scores.";
             }
-        },
-        hasAttempted(quizId) {
-            return this.attemptedQuizIds.has(quizId);
         },
         formatDuration(duration) {
             if (!duration) return "";

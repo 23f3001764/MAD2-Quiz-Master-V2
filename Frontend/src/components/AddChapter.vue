@@ -9,6 +9,7 @@
             <button @click="successmessage = null" class="btn-close" aria-label="Close"></button>
         </div>
 
+        <!-- Form Card -->
         <div class="add-chapter-card">
             <h2 class="text-center">Add New Chapter</h2>
             <form @submit.prevent="submitForm">
@@ -35,14 +36,14 @@ export default {
             chapter: {
                 chname: "",
                 description: "",
-                sname: "", 
+                sname: "", // Initialize as empty string
             },
             errormessage: null,
             successmessage: null,
         };
     },
     created() {
-        this.chapter.sname = this.$route.params.sname; 
+        this.chapter.sname = this.$route.params.sname;
     },
     methods: {
         async submitForm() {

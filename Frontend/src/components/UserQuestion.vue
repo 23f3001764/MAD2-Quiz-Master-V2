@@ -21,7 +21,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="mt-4">
                 <button @click="submitQuiz" class="btn btn-success me-3">Submit</button>
                 <button @click="cancelQuiz" class="btn btn-danger">Cancel</button>
@@ -215,5 +214,4 @@ export default {
         clearInterval(this.timer);
     }
 };
-// again a commit for milestone 6
 </script>
