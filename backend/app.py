@@ -1,13 +1,13 @@
 from flask import Flask, send_from_directory,jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from model import db, User, Scores  # ✅ Added Scores
+from model import db, User, Scores  
 from api import (
     LoginAPI, SignupAPI, SubjectAPI, QuizAPI, QuestionAPI,
     AnswerAPI, ScoreAPI, ChapterAPI, UserAPI, NotifyAPI, ExportAPT, cache
 )
 from worker import celery_init_app
-from task import send_monthly_report  # ✅ Added missing import
+from task import send_monthly_report 
 import os
 from datetime import timedelta
 from celery.result import AsyncResult
@@ -27,11 +27,11 @@ app.config['CACHE_REDIS_DB'] = 0
 app.config['CACHE_REDIS_URL'] = "redis://localhost:6379"
 app.config['CACHE_DEFAULT_TIMEOUT'] = 500
 
-celery = celery_init_app(app)  # ✅ No autodiscover_tasks()
+celery = celery_init_app(app)  
 
 api = Api(app)
 jwt = JWTManager(app)
-app.app_context().push()  # ✅ Ensure context before setting celery schedule
+app.app_context().push()  
 cache.init_app(app)
 db.init_app(app)
 
@@ -92,7 +92,7 @@ def email():
     return {'task_id': res.id, 'status': res.status, 'result': res.result}
 
 if __name__ == "__main__":
-    with app.app_context():  # ✅ Ensures correct DB initialization
+    with app.app_context(): 
         db.create_all()
         add_admin()
     app.run(debug=True)

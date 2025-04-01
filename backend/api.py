@@ -14,14 +14,13 @@ class ExportAPT(Resource):
     def get(self):
         user = get_jwt_identity()
 
-        # Prevent admin from generating CSV
+        
         if user.get('isadmin'):
             return {'message': 'Unauthorized Access'}, 401
 
-        # Start the CSV generation task
+       
         result = download_csv.delay(user.get('user_id'))
 
-        # Return only the task ID (result.result is not available yet)
         return {'id': result.id}, 202
 
 
