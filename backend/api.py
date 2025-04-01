@@ -6,11 +6,23 @@ from flask_jwt_extended import jwt_required
 from flask_caching import Cache
 from datetime import datetime
 from model import db, User, Subject, Chapter, Quizz, Question, Answer, Scores, Notify
+from task import download_csv, send_monthly_report, notify
 
+cache=Cache()
+class ExportAPT(Resource):
+    @jwt_required()
+    def get(self):
+        user = get_jwt_identity()
 
-cache = Cache()
+        # Prevent admin from generating CSV
+        if user.get('isadmin'):
+            return {'message': 'Unauthorized Access'}, 401
 
-0
+        # Start the CSV generation task
+        result = download_csv.delay(user.get('user_id'))
+
+        # Return only the task ID (result.result is not available yet)
+        return {'id': result.id}, 202
 
 
 class NotifyAPI(Resource):
@@ -39,9 +51,7 @@ class NotifyAPI(Resource):
             time = datetime.strptime(data.get('time').strip(), "%H:%M").time()
         except ValueError:
             return {'message': 'Invalid time format. Use HH:MM for time.'}, 400
-        useers= User.query.filter_by(id=user.get('user_id')).first()
-        chap = Chapter.query.filter_by(id=chap_id).first()
-        notify = Notify(chap_id=chap_id,chname=chap.chname,time=time,user_id = user.get('user_id'),user_name=useers.name)
+        notify = Notify(chap_id=chap_id,time=time,user_id = user.get('user_id'))
         db.session.add(notify)
         db.session.commit()
         return notify.convert_to_json(), 201
@@ -301,6 +311,9 @@ class QuizAPI(Resource):
             new_quiz = Quizz(topic=data.get('topic').strip(),date=quiz_date,chname=data.get('chname').strip(),duration=duration_time)
         db.session.add(new_quiz)
         db.session.commit()
+        notify = Notify.query.filter_by(chap_id=data.get('chname')).all()
+        for n in notify:
+            response = notify.delay(n.user_name)
         return {'message':'Quizz added sucessfully.'}, 200
     
     @jwt_required()
