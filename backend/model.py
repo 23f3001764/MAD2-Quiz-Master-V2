@@ -123,8 +123,8 @@ class Scores(db.Model):
 class Notify(db.Model):
     id = Column(Integer, primary_key=True)
     time = Column(Time, nullable=False)
-    chname = Column(String(64),ForeignKey('chapter.chname'),nullable=False)
-    username = Column(String(64),ForeignKey('user.name'),nullable=False)
+    chap_id = Column(Integer,ForeignKey('chapter.id'),nullable=False)
+    user_id = Column(Integer,ForeignKey('user.id'),nullable=False)
     def convert_to_json(self):
         
         return {
@@ -132,6 +132,4 @@ class Notify(db.Model):
             'time' : self.time.strftime("%H:%M"),
             'chap_id' : self.chap_id,
             'user_id' : self.user_id,
-            'username' : self.username, 
-            'chname' : self.chname
         }

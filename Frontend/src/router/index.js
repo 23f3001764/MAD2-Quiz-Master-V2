@@ -17,7 +17,8 @@ import Userchapter from '@/components/UserChapter.vue'
 import Userquiz from '@/components/UserQuiz.vue'
 import Userquestion from '@/components/UserQuestion.vue'
 import UserDashboard from '@/components/UserDashboard.vue'
-
+import AdminDashboard from '@/components/AdminDashboard.vue'
+import AdminUser from '@/components/AdminUser.vue'
 
 
 const router = createRouter({
@@ -113,7 +114,16 @@ const router = createRouter({
       name: 'userdashboard',
       component: UserDashboard,
     },
-    
+    {
+      path: '/admindashboard',
+      name: 'admindashboard',
+      component: AdminDashboard,
+    },
+    {
+      path: '/adminuser/:uid',
+      name: 'adminuser',
+      component: AdminUser,
+    },
   ],
 })
 
