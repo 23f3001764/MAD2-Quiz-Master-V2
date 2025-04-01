@@ -81,3 +81,4 @@ export default {
     },
 };
 </script>
+<!-- already added search funtinaliy -->

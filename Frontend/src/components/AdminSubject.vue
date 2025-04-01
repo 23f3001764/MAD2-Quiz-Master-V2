@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-4">
-        <div v-if="errormessage" class="alert alert-danger text-center">
+        <div v-if="errormessage" class="alert alert-danger text-center ">
             {{ errormessage }}
             <button @click="errormessage = null" class="btn-close" aria-label="Close"></button>
         </div>
@@ -98,17 +98,19 @@ export default {
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    this.errormessage = errorData.message||"Failed to delete subject. Please try again later.";
+                    this.errormessage = errorData.message || "Failed to delete subject. Please try again lateer.";
                     return;
                 }
 
-                this.errormessage = "Subject deleted successfully.";
+                this.errormessage = "Subject deleted successfully. ";
+
                 this.subjects = this.subjects.filter(subject => subject.id !== subjectId);
             } catch (error) {
                 console.error("Error deleting subject:", error);
-                this.errormessage = "An error occurred while deleting the subject. Please try again.";
+                alert("An error occurred while deleting the subject.");
             }
         }
     },
 };
 </script>
+<!-- already added search funtinaliy -->
